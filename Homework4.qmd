@@ -1,0 +1,159 @@
+---
+title: "Charlie Armentrout ST 558 Homework 4"
+format: html
+editor: visual
+---
+
+## Task 1: Conceptual Questions
+
+1.  What is the purpose of the lapply() function? What is the equivalent purrr function?
+
+\> The purpose of the lapply() function is to apply a function to lists and obtain a list object. The equivalent purrr function is map().
+
+2.  Suppose we have a list called my_list. Each element of the list is a numeric data frame (all columns are numeric). We want to use lapply() to run the code cor(numeric_matrix, method = "kendall") on each element of the list. Write code to do this below! (I’m really trying to ask you how you specify method = "kendall" when calling lapply())
+
+\> result_list <- lapply(my_list, function(x) cor(x, method = "kendall"))
+
+3. What are two advantages of using purrr functions instead of the BaseR apply family?
+
+\> The two advantages of using purrr functions instead of the BaseR apply family is more consistency and some helper functions. More on the consistency advantage, purrr functions like map() always returns outputs in the form of a list, which is predictable regardless of the input structure.
+
+4. What is a side-effect function?
+
+\> A side-effect function is a function that changes the state of something or in other words, causes observable changes to a program's state or environment.
+
+5. Why can you name a variable sd in a function and not cause any issues with the sd function?
+
+\> When you call a function, it creates temporary function environments.  This is why the variable sd does not exist outside of the function it was used in as the temporary function environment goes away as soon as the function is done running. This is why the sd variable in a function does not conflict with the sd function itself. 
+
+## Task 2 - Writing R Functions
+The getRMSE() function computes the Root Mean Square Error (RMSE) between actual and predicted values. It handles missing values (NA) using optional arguments (...) to ensure flexibility in data processing.
+1. 
+```{r}
+getRMSE <- function(resp, pred, ...) {
+  # Calculating RMSE
+  rmse <- sqrt(mean((resp - pred)^2, ...))
+  return(rmse)
+}
+```
+2. 
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+getRMSE(resp, pred)
+# Introduce missing values in resp
+resp[c(4, 8)] <- NA_real_
+getRMSE(resp, pred, na.rm=TRUE)
+getRMSE(resp, pred)
+```
+The getMAE() function computes the Mean Absolute Error (MAE) between actual and predicted values. Like getRMSE() above, it accommodates missing values with (...) if need be and provides a robust metric for evaluating prediction accuracy.
+3. 
+```{r}
+getMAE <- function(resp, pred, ...) {
+  # Calculating MAE
+  rmse <- mean(abs(resp - pred), ...)
+  return(rmse)
+}
+```
+4.
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+getMAE(resp,pred)
+# Introduce missing values in resp
+resp[c(4, 8)] <- NA_real_
+getMAE(resp, pred, na.rm=TRUE)
+getMAE(resp, pred)
+```
+The getMetrics() function acts as a wrapper to compute multiple evaluation metrics (such as RMSE and MAE) for comparing actual and predicted values. It checks inputs for validity and uses optional arguments (...) to handle missing values appropriately if need be.
+5.
+```{r}
+getMetrics <- function(actual, predicted, metrics = c("RMSE", "MAE"), ...) {
+  # Check if actual and predicted are numeric vectors
+  if (!is.atomic(actual) || !is.numeric(actual) || !is.atomic(predicted) || !is.numeric(predicted)) {
+    message("Error: 'actual' and 'predicted' must be numeric vectors.")
+    return()
+  }
+  results <- list()
+  if ("RMSE" %in% metrics) {
+    results$RMSE <- getRMSE(actual, predicted, ...)
+  }
+  if ("MAE" %in% metrics) {
+    results$MAE <- getMAE(actual, predicted, ...)
+  }
+  return(results)
+}
+```
+6.
+```{r}
+set.seed(10)
+n <- 100
+x <- runif(n)
+resp <- 3 + 10*x + rnorm(n)
+pred <- predict(lm(resp ~ x), data.frame(x))
+getMetrics(resp, pred, metrics = "RMSE")
+getMetrics(resp, pred, metrics = "MAE")
+getMetrics(resp, pred, metrics = c("RMSE", "MAE"))
+resp[c(2, 6)] <- NA_real_
+getMetrics(resp, pred, metrics = "RMSE")
+getMetrics(resp, pred, metrics = "MAE")
+getMetrics(resp, pred, metrics = c("RMSE", "MAE"))
+# Original values
+original_values <- 3 + 10 * x + rnorm(n)
+# Reset NA values back to original values
+resp[c(2, 6)] <- original_values[c(2, 6)]
+resp <- data.frame(value = as.character(resp))
+pred <- data.frame(value = as.character(pred))
+incorrectdata <- getMetrics(resp, pred, metrics = c("RMSE", "MAE"))
+```
+
+# Task 3 - Querying an API and a Tidy-Style Function
+
+1.
+```{r}
+library(httr)
+library(jsonlite)
+library(tidyverse)
+library(lubridate)
+URL <- "https://newsapi.org/v2/everything?q=ESPN&from=2024-06-12&sortBy=popularity&apiKey=af6362722156434f84096a3acdd136ab"
+news_return <- httr::GET(URL)
+```
+
+2.
+```{r}
+parsed_news_return <- fromJSON(rawToChar(news_return$content))
+```
+The queryNewsAPI() function queries the NewsAPI using parameters like search query (q), start date (from), and API key (apiKey). It retrieves news articles matching the specified criteria and parses the JSON response for further analysis.
+3.
+```{r}
+# Function to query News API
+queryNewsAPI <- function(q, from, apiKey) {
+  # Base URL for the News API
+  base_url <- "https://newsapi.org/v2/everything"
+  
+  # Construct query parameters
+  query_params <- list(
+    q = q,
+    from = from,
+    apiKey = apiKey
+  )
+  
+  # Make GET request
+  response <- httr::GET(base_url, query = query_params)
+  
+  # Parse JSON content
+  parsed_response <- fromJSON(rawToChar(response$content))
+  
+  return(parsed_response)
+}
+
+example_1 <- queryNewsAPI("NBA","2024-06-10", "af6362722156434f84096a3acdd136ab")
+example_2 <- queryNewsAPI("MLB","2024-06-9", "af6362722156434f84096a3acdd136ab")
+```
+
