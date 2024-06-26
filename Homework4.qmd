@@ -152,12 +152,10 @@ queryNewsAPI <- function(q, from, apiKey) {
   # Parse JSON content
   parsed_response <- fromJSON(rawToChar(response$content))
   
-  return(parsed_response)
+  return(str(parsed_response))
 }
 
 example_1 <- queryNewsAPI("NBA","2024-06-10", "af6362722156434f84096a3acdd136ab")
-str(example_1)
 example_2 <- queryNewsAPI("MLB","2024-06-9", "af6362722156434f84096a3acdd136ab")
-str(example_2)
 ```
 
