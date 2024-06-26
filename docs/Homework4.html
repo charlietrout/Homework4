@@ -369,7 +369,7 @@ $MAE
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 3
  $ status      : chr "ok"
- $ totalResults: int 2915
+ $ totalResults: int 2916
  $ articles    :'data.frame':   100 obs. of  8 variables:
   ..$ source     :'data.frame': 100 obs. of  2 variables:
   .. ..$ id  : chr [1:100] NA NA "business-insider" NA ...
@@ -383,7 +383,7 @@ $MAE
   ..$ content    : chr [1:100] "What you need to know\r\n&lt;ul&gt;&lt;li&gt;Samsung announced on Wednesday (June 20) that it will be expanding its News Ap"| __truncated__ "Chicago Sky forward Angel Reese made WNBA history by putting up seven double-doubles in a row the longest strea"| __truncated__ "From left: Mayur Gupta, Kim Chappell, Kory Marchisotto, Asad Ayaz and Jonnie CahillBI\r\n&lt;ul&gt;\n&lt;li&gt;\nCMOs are u"| __truncated__ "A fourth man was arrested on Friday (June 7) in connection with the sports betting controversy that led to the "| __truncated__ ...</code></pre>
 </div>
 </div>
-<p>The queryNewsAPI() function queries the NewsAPI using parameters like search query (q), start date (from), and API key (apiKey). It retrieves news articles matching the specified criteria and parses the JSON response for further analysis.</p>
+<p>The queryNewsAPI() function queries the NewsAPI using parameters like search query (q), start date (from), and API key (apiKey). It retrieves news articles matching the specified arguments and parses the JSON response. It then outputs the structure of the parsed JSON response for further analysis.</p>
 <ol start="3" type="1">
 <li></li>
 </ol>
@@ -413,7 +413,7 @@ $MAE
 <div class="cell-output cell-output-stdout">
 <pre><code>List of 3
  $ status      : chr "ok"
- $ totalResults: int 5703
+ $ totalResults: int 5704
  $ articles    :'data.frame':   100 obs. of  8 variables:
   ..$ source     :'data.frame': 100 obs. of  2 variables:
   .. ..$ id  : chr [1:100] NA NA NA NA ...
