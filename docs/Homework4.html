@@ -364,36 +364,87 @@ $MAE
 <li></li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>parsed_news_return <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(news_return<span class="sc">$</span>content))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>parsed_news_return <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(news_return<span class="sc">$</span>content))</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(parsed_news_return)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 3
+ $ status      : chr "ok"
+ $ totalResults: int 2915
+ $ articles    :'data.frame':   100 obs. of  8 variables:
+  ..$ source     :'data.frame': 100 obs. of  2 variables:
+  .. ..$ id  : chr [1:100] NA NA "business-insider" NA ...
+  .. ..$ name: chr [1:100] "Android Central" "NPR" "Business Insider" "ReadWrite" ...
+  ..$ author     : chr [1:100] "nandika.iyerravi@futurenet.com (Nandika Ravi)" "Emma Bowman" "Lara O'Reilly,Lauren Johnson,Michael Kaminer" "Suswati Basu" ...
+  ..$ title      : chr [1:100] "Samsung News picks up a much needed update in the US" "WNBA rookie Angel Reese makes double-double history" "Business Insider's most innovative CMOs of 2024" "Fourth man arrested in NBA betting scandal involving Jontay Porter" ...
+  ..$ description: chr [1:100] "Samsung rolled out a new update for its news app that will now showcase all the political happenings in the cou"| __truncated__ "The \"Double-Double Queen\" is living up to her name early in her pro career. The Chicago Sky forward earned he"| __truncated__ "Business Insider's annual list of the \"Most Innovative CMOs\" spotlights marketers who are rising to challenge"| __truncated__ "A fourth man was arrested on Friday (June 7) in connection with the sports betting controversy that led to the…"| __truncated__ ...
+  ..$ url        : chr [1:100] "https://www.androidcentral.com/apps-software/samsung-news-update-presidential-election-sports" "https://www.npr.org/2024/06/21/nx-s1-5015664/angel-reese-double-double-record" "https://www.businessinsider.com/most-innovative-chief-marketing-officers-2024-6" "https://readwrite.com/man-arrested-nba-betting-scandal-jontay-porter/" ...
+  ..$ urlToImage : chr [1:100] "https://cdn.mos.cms.futurecdn.net/j4ZjX8wuwEKqReV3xYbxDc-1200-80.jpg" "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/4500x2531+0+234/resize/1400/quality/100/format/jpe"| __truncated__ "https://i.insider.com/66704e33ed9a404d829e47cf?width=1200&amp;format=jpeg" "https://readwrite.com/wp-content/uploads/2024/06/Fourth-man-arrested-in-NBA-betting-scandal-involving-Jontay-Porter.png" ...
+  ..$ publishedAt: chr [1:100] "2024-06-21T01:26:20Z" "2024-06-21T23:49:36Z" "2024-06-18T09:00:01Z" "2024-06-14T14:10:54Z" ...
+  ..$ content    : chr [1:100] "What you need to know\r\n&lt;ul&gt;&lt;li&gt;Samsung announced on Wednesday (June 20) that it will be expanding its News Ap"| __truncated__ "Chicago Sky forward Angel Reese made WNBA history by putting up seven double-doubles in a row the longest strea"| __truncated__ "From left: Mayur Gupta, Kim Chappell, Kory Marchisotto, Asad Ayaz and Jonnie CahillBI\r\n&lt;ul&gt;\n&lt;li&gt;\nCMOs are u"| __truncated__ "A fourth man was arrested on Friday (June 7) in connection with the sports betting controversy that led to the "| __truncated__ ...</code></pre>
+</div>
 </div>
 <p>The queryNewsAPI() function queries the NewsAPI using parameters like search query (q), start date (from), and API key (apiKey). It retrieves news articles matching the specified criteria and parses the JSON response for further analysis.</p>
 <ol start="3" type="1">
 <li></li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to query News API</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>queryNewsAPI <span class="ot">&lt;-</span> <span class="cf">function</span>(q, from, apiKey) {</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Base URL for the News API</span></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="st">"https://newsapi.org/v2/everything"</span></span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Construct query parameters</span></span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">q =</span> q,</span>
-<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">from =</span> from,</span>
-<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">apiKey =</span> apiKey</span>
-<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make GET request</span></span>
-<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>  response <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(base_url, <span class="at">query =</span> query_params)</span>
-<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Parse JSON content</span></span>
-<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>  parsed_response <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(response<span class="sc">$</span>content))</span>
-<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(parsed_response)</span>
-<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a>example_1 <span class="ot">&lt;-</span> <span class="fu">queryNewsAPI</span>(<span class="st">"NBA"</span>,<span class="st">"2024-06-10"</span>, <span class="st">"af6362722156434f84096a3acdd136ab"</span>)</span>
-<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a>example_2 <span class="ot">&lt;-</span> <span class="fu">queryNewsAPI</span>(<span class="st">"MLB"</span>,<span class="st">"2024-06-9"</span>, <span class="st">"af6362722156434f84096a3acdd136ab"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to query News API</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>queryNewsAPI <span class="ot">&lt;-</span> <span class="cf">function</span>(q, from, apiKey) {</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Base URL for the News API</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  base_url <span class="ot">&lt;-</span> <span class="st">"https://newsapi.org/v2/everything"</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Construct query parameters</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  query_params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">q =</span> q,</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">from =</span> from,</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">apiKey =</span> apiKey</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Make GET request</span></span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>  response <span class="ot">&lt;-</span> httr<span class="sc">::</span><span class="fu">GET</span>(base_url, <span class="at">query =</span> query_params)</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Parse JSON content</span></span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>  parsed_response <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">rawToChar</span>(response<span class="sc">$</span>content))</span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(parsed_response)</span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a>example_1 <span class="ot">&lt;-</span> <span class="fu">queryNewsAPI</span>(<span class="st">"NBA"</span>,<span class="st">"2024-06-10"</span>, <span class="st">"af6362722156434f84096a3acdd136ab"</span>)</span>
+<span id="cb49-23"><a href="#cb49-23" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(example_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 3
+ $ status      : chr "ok"
+ $ totalResults: int 5703
+ $ articles    :'data.frame':   100 obs. of  8 variables:
+  ..$ source     :'data.frame': 100 obs. of  2 variables:
+  .. ..$ id  : chr [1:100] NA NA NA NA ...
+  .. ..$ name: chr [1:100] "NPR" "ReadWrite" "NPR" "NPR" ...
+  ..$ author     : chr [1:100] "Danielle Kurtzleben" "Suswati Basu" "A Martínez" "Gene Demby" ...
+  ..$ title      : chr [1:100] "Saturday Sports: NBA finals, Caitlin Clark and internet trolls, Jerry West passing" "Fourth man arrested in NBA betting scandal involving Jontay Porter" "Boston Celtics fans are celebrating a league record 18th NBA championship" "Code Switch co-host weighs in on basketball, housing, and two Donalds" ...
+  ..$ description: chr [1:100] "NPR's Danielle Kurtzleben and Meadowlark Media 's Howard Bryant discuss the NBA Finals and remember \"The Logo\"." "A fourth man was arrested on Friday (June 7) in connection with the sports betting controversy that led to the…"| __truncated__ "NPR's A Martinez talks to Martenzie Johnson of ESPN’s Andscape about the Celtics 106-88 win over the Dallas Mav"| __truncated__ "Code Switch co-host Gene Demby weighs in on what Donald Sterling getting banned for life from the NBA has to do"| __truncated__ ...
+  ..$ url        : chr [1:100] "https://www.npr.org/2024/06/15/nx-s1-5006060/saturday-sports-nba-finals-caitlin-clark-and-internet-trolls-jerry-west-passing" "https://readwrite.com/man-arrested-nba-betting-scandal-jontay-porter/" "https://www.npr.org/2024/06/18/nx-s1-5008862/boston-celtics-fans-are-celebrating-a-league-record-18th-nba-championship" "https://www.npr.org/2024/06/10/g-s1-3697/code-switch-host-on-basketball-housing-and-two-donalds" ...
+  ..$ urlToImage : chr [1:100] "https://media.npr.org/include/images/facebook-default-wide-s1400-c100.jpg" "https://readwrite.com/wp-content/uploads/2024/06/Fourth-man-arrested-in-NBA-betting-scandal-involving-Jontay-Porter.png" "https://media.npr.org/include/images/facebook-default-wide-s1400-c100.jpg" "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/594x334+0+31/resize/1400/quality/100/format/jpeg/?"| __truncated__ ...
+  ..$ publishedAt: chr [1:100] "2024-06-15T12:03:17Z" "2024-06-14T14:10:54Z" "2024-06-18T08:20:05Z" "2024-06-10T19:27:34Z" ...
+  ..$ content    : chr [1:100] "NPR's Danielle Kurtzleben and Meadowlark Media 's Howard Bryant discuss the NBA Finals and remember \"The Logo\"." "A fourth man was arrested on Friday (June 7) in connection with the sports betting controversy that led to the "| __truncated__ "NPR's A Martinez talks to Martenzie Johnson of ESPNs Andscape about the Celtics 106-88 win over the Dallas Mave"| __truncated__ "This week, I&nbsp;swung by Pop Culture Happy Hour&nbsp;to talk to the great Aisha Harris about&nbsp;Clipped, the new FX minise"| __truncated__ ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>example_2 <span class="ot">&lt;-</span> <span class="fu">queryNewsAPI</span>(<span class="st">"MLB"</span>,<span class="st">"2024-06-9"</span>, <span class="st">"af6362722156434f84096a3acdd136ab"</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(example_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 3
+ $ status      : chr "ok"
+ $ totalResults: int 3696
+ $ articles    :'data.frame':   100 obs. of  8 variables:
+  ..$ source     :'data.frame': 100 obs. of  2 variables:
+  .. ..$ id  : chr [1:100] NA NA NA "espn" ...
+  .. ..$ name: chr [1:100] "BBC News" "ReadWrite" "NPR" "ESPN" ...
+  ..$ author     : chr [1:100] NA "Sophie Atkinson" "Steve Futterman" "ESPN Staff" ...
+  ..$ title      : chr [1:100] "Baseball great Willie Mays dies at 93" "MLB disciplines umpire Pat Hoberg following gambling investigation" "MLB game in Alabama takes on extra significance following Willie Mays' death" "Barry Bonds, CC Sabathia and more pay tribute to Willie Mays" ...
+  ..$ description: chr [1:100] "Mays won the World Series with the San Francisco Giants in 1954." "Umpire Pat Hoberg has been disciplined by Major League Baseball following an investigation that took place over"| __truncated__ "Major League Baseball played at historic Rickwood Field in Birmingham, Ala., Thursday. It is where Willie Mays,"| __truncated__ "Mays died Tuesday afternoon at 93 years old, and the sports world took to social media to pay tribute to the Hall of Famer." ...
+  ..$ url        : chr [1:100] "https://www.bbc.com/news/articles/cp99w0wme02o" "https://readwrite.com/mlb-disciplines-umpire-pat-hoberg-following-gambling-investigation/" "https://www.npr.org/2024/06/21/nx-s1-5012621/mlb-game-in-alabama-takes-on-extra-significance-following-willie-mays-death" "https://www.espn.com/mlb/story/_/id/40382707/mlb-hall-famer-willie-mays-social-media-tributes" ...
+  ..$ urlToImage : chr [1:100] "https://ichef.bbci.co.uk/news/1024/branded_news/76ee/live/52971180-2dd9-11ef-93e4-45d8542d5b46.jpg" "https://readwrite.com/wp-content/uploads/2024/06/Pat_Hoberg_15046618471_cropped.jpg" "https://media.npr.org/include/images/facebook-default-wide-s1400-c100.jpg" "https://a4.espncdn.com/combiner/i?img=%2Fphoto%2F2015%2F0503%2Fnow_otd_0504WillieMays_cr_b_1296x729.jpg" ...
+  ..$ publishedAt: chr [1:100] "2024-06-19T01:23:45Z" "2024-06-17T11:35:56Z" "2024-06-21T09:10:28Z" "2024-06-19T10:57:41Z" ...
+  ..$ content    : chr [1:100] "Baseball legend Willie Mays, widely considered one of the best players in the sport's history, has died, accord"| __truncated__ "Umpire Pat Hoberg has been disciplined by Major League Baseball following an investigation that took place over"| __truncated__ "Major League Baseball played at historic Rickwood Field in Birmingham, Ala., Thursday. It is where Willie Mays,"| __truncated__ "The San Francisco Giants announced that Willie Mays, the greatest center fielder of all time, died Tuesday afte"| __truncated__ ...</code></pre>
+</div>
 </div>
 
 

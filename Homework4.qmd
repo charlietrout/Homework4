@@ -128,6 +128,7 @@ news_return <- httr::GET(URL)
 2.
 ```{r}
 parsed_news_return <- fromJSON(rawToChar(news_return$content))
+str(parsed_news_return)
 ```
 The queryNewsAPI() function queries the NewsAPI using parameters like search query (q), start date (from), and API key (apiKey). It retrieves news articles matching the specified criteria and parses the JSON response for further analysis.
 
@@ -155,6 +156,8 @@ queryNewsAPI <- function(q, from, apiKey) {
 }
 
 example_1 <- queryNewsAPI("NBA","2024-06-10", "af6362722156434f84096a3acdd136ab")
+str(example_1)
 example_2 <- queryNewsAPI("MLB","2024-06-9", "af6362722156434f84096a3acdd136ab")
+str(example_2)
 ```
 
